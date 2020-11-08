@@ -40,5 +40,16 @@ Refer [here](https://medium.com/datadriveninvestor/devops-using-ansible-to-provi
 
 10. Create playbook and roles for apache / php install  
 
-11. Apply playbook
-  >ansible-playbook -i prod  --vault-password-file vault.pass playbook-testweb.yml
+11. Apply playbook  
+  >ansible-playbook -i prod  --vault-password-file vault.pass playbook-testweb.yml  
+
+12. Stop the apache server temporarily
+
+13. Apply playbook for generating letsencrypt certs by certbot
+  >ansible-playbook -i prod  --vault-password-file vault.pass letsencrypt-issue2.yml    
+
+14. Update the apache configuration with files/apache_conf_for_ssl
+
+15. Start the apache server again and test site:
+  >curl https://munish.cf
+  >curl https://www.munish.cf

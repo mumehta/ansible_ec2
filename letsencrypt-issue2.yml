@@ -1,0 +1,25 @@
+- hosts: server
+  gather_facts: true
+  become: true
+
+  vars:
+    certbot_admin_email: munish.mehta.au@gmail.com
+    certbot_create_if_missing: true
+    certbot_create_standalone_stop_services: []
+    certbot_certs:
+      - domains:
+          - munish.cf
+          - www.munish.cf
+  roles:
+    - geerlingguy.certbot
+
+  tasks:
+    - name: Flush handlers in case any configs have changed.
+      meta: flush_handlers
+
+    # - name: Test secure connection to SSL domain.
+    #   uri:
+    #     url: https://certbot-test.servercheck.in/
+    #     status_code: 200
+    #   delegate_to: localhost
+    #   become: false

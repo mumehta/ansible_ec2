@@ -12,8 +12,11 @@
     ServerName munish.cf
     SSLEngine on
 
-    SSLCertificateFile "/etc/letsencrypt/certs/munish.cf.crt"
-    SSLCertificateKeyFile "/etc/letsencrypt/keys/munish.cf.key"
+    SSLCertificateFile "/etc/letsencrypt/live/munish.cf/fullchain.pem"
+    SSLCertificateKeyFile "/etc/letsencrypt/live/munish.cf/privkey.pem"
+
+    SSLProtocol TLSv1.1 TLSv1.2
+    SSLCipherSuite  HIGH:!aNULL:!MD5
 
 
 </VirtualHost>
