@@ -1,0 +1,3 @@
+---
+scl_php_version: rh-php72
+scl_php_global: true

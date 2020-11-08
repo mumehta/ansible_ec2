@@ -1,0 +1,6 @@
+---
+- name: Install SCL repository
+  yum:
+    name: centos-release-scl
+    state: present
+

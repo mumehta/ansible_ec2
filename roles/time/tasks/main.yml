@@ -1,0 +1,25 @@
+---
+- name: Set system timezone to Australia/Sydney
+  timezone:
+    name: Australia/Sydney
+
+- name: Install chrony package
+  yum:
+    name: chrony
+    state: present
+
+- name: Enable chronyd systemd service
+  systemd:
+    name: chronyd
+    enabled: true
+
+- name: Install chronyd system configuration
+  copy:
+    backup: yes
+    dest: /etc/chrony.conf
+    owner: root
+    group: root
+    mode: 0444
+    src: chrony.conf
+  notify: restart chronyd
+

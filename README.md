@@ -1,6 +1,6 @@
 # Launching EC2 with Ansible - using vault #
 
-Refer [here](https://medium.com/datadriveninvestor/devops-using-ansible-to-provision-aws-ec2-instances-3d70a1cb155f)
+Refer [here](https://medium.com/datadriveninvestor/devops-using-ansible-to-provision-aws-ec2-instances-3d70a1cb155f) and [here](https://www.bogotobogo.com/DevOps/Ansible/Ansible-SSH-Connection-Setup-Run-Command.php)
 
 ## Following steps executed ##
 
@@ -29,3 +29,16 @@ Refer [here](https://medium.com/datadriveninvestor/devops-using-ansible-to-provi
 
 7. Launch new instances:  
   >ansible-playbook playbook.yml --vault-password-file vault.pass --tags create_ec2  
+
+8. Test ssh to ec2 instance:  
+  >ssh -i ~/.ssh/sbse_ansible_app centos@<public-ip>  
+
+8. Create the inventory file prod/inventory and update with public ec2 instance ip, generated in step 7  
+
+9. Test connectivity with ping module  
+  >ansible -i prod -m ping  --vault-password-file vault.pass  all  
+
+10. Create playbook and roles for apache / php install  
+
+11. Apply playbook
+  >ansible-playbook -i prod  --vault-password-file vault.pass playbook-testweb.yml

@@ -1,0 +1,3 @@
+---
+httpd_mod_ssl: no
+php_version: "5.4"

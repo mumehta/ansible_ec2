@@ -1,0 +1,7 @@
+---
+- name: install base global pip3 modules
+  pip:
+    name:
+      - boto3
+  vars:
+    ansible_python_interpreter: /usr/bin/python3

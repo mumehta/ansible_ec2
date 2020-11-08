@@ -1,0 +1,18 @@
+---
+- name: Install PHP from scl
+  yum:
+    name:
+     - "{{ scl_php_version }}"
+     - "{{ scl_php_version }}-php"
+     - "{{ scl_php_version }}-php-devel"
+     - "{{ scl_php_version }}-php-gd"
+     - "{{ scl_php_version }}-php-mbstring"
+     - "{{ scl_php_version }}-php-pecl-mongodb"
+     - "{{ scl_php_version }}-php-pecl-memcached"
+     - "{{ scl_php_version }}-php-mysqlnd"
+     - "{{ scl_php_version }}-php-opcache"
+     - "{{ scl_php_version }}-php-soap"
+     - "{{ scl_php_version }}-php-xmlrpc"
+     - sclo-php72-php-pecl-imagick
+    state: present
+

@@ -1,0 +1,16 @@
+---
+- name: Set PHP timezone
+  replace:
+    dest: "/etc/opt/rh/{{ scl_php_version }}/php.ini"
+    regexp: >
+      ^;date.timezone =$
+    replace: "date.timezone = Australia/Sydney"
+
+- name: Enable SCL PHP for interactive users
+  template:
+    src: enablephp.sh.j2
+    dest: /etc/profile.d/enablephp.sh
+    mode: 0755
+    owner: root
+    group: wheel
+  when: scl_php_global

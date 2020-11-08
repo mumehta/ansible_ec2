@@ -1,0 +1,21 @@
+---
+- name: Download composer installer
+  get_url:
+    url: https://getcomposer.org/installer
+    dest: /tmp/setup.php
+
+- name: Install composer
+  command: /opt/rh/'{{ scl_php_version }}'/root/usr/bin/php /tmp/setup.php --install-dir=/usr/local/bin --filename=composer
+
+- name: Symlink composer to PATH for users
+  file:
+    src: /usr/local/bin/composer
+    dest: /usr/bin/composer
+    owner: root
+    group: root
+    state: link
+
+- name: Remove composer installer files
+  file:
+    path: /tmp/setup.php
+    state: absent

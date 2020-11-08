@@ -1,0 +1,13 @@
+/var/log/httpd24/*.log /var/log/httpd24/*_log /var/log/httpd24/*/*.log /var/log/httpd24/*/*_log {
+    daily
+    rotate 14
+    missingok
+    notifempty
+    sharedscripts
+    compress
+    delaycompress
+    create 640 root adm
+    postrotate
+        /bin/systemctl reload httpd24-httpd.service >/dev/null 2>/dev/null || true
+    endscript
+}

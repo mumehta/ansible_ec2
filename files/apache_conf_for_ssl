@@ -1,0 +1,19 @@
+<VirtualHost *:80>
+
+    ServerName munish.cf
+
+    #RewriteEngine On
+    #RewriteCond %{HTTPS} off
+    #RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName munish.cf
+    SSLEngine on
+
+    SSLCertificateFile "/etc/letsencrypt/certs/munish.cf.crt"
+    SSLCertificateKeyFile "/etc/letsencrypt/keys/munish.cf.key"
+
+
+</VirtualHost>

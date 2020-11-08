@@ -1,0 +1,5 @@
+---
+scl_base_path: /opt/rh/httpd24/root
+scl_svc_name: httpd24-httpd
+scl_log_path: /var/log/httpd24
+

@@ -1,0 +1,14 @@
+- hosts: server
+  become: yes
+  vars:
+    - httpd_mod_ssl: yes
+    - php_version: "7.2"
+    - php_bin_path: "/opt/rh/rh-php72/root/usr/bin/"
+  roles:
+    - centos_scl
+    - centos_base_packages
+    - pip3_modules
+    - centos_base_config
+    - time
+    - php7
+    - httpd24_server_scl

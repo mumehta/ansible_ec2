@@ -57,6 +57,16 @@
                 - 22
               cidr_ip: 0.0.0.0/0
               rule_desc: allow all on ssh port
+            - proto: tcp
+              ports:
+                - 80
+              cidr_ip: 0.0.0.0/0
+              rule_desc: allow web access
+            - proto: tcp
+              ports:
+                - 443
+              cidr_ip: 0.0.0.0/0
+              rule_desc: allow secure web access
         register: result_sec_group
 
       - name: Provision instance(s)

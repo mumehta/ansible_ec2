@@ -1,0 +1,142 @@
+---
+- name: Install httpd24 scl package
+  yum:
+    name: httpd24
+    state: present
+
+- name: Check if httpd exists
+  command: systemctl cat httpd
+  check_mode: no
+  register: httpd_exists
+  changed_when: False
+  failed_when: httpd_exists.rc not in [0, 1]
+
+- name: Ensure base httpd package not running and disabled
+  systemd:
+    name: httpd
+    state: stopped
+    enabled: no
+  when: httpd_exists.rc == 0
+
+- name: Create access logs directory
+  file:
+    mode: 0755
+    path: "{{ scl_log_path }}/access_logs"
+    state: directory
+
+- name: Create error logs directory
+  file:
+    mode: 0755
+    path: "{{ scl_log_path }}/error_logs"
+    state: directory
+
+- name: Create sites directory
+  file:
+    mode: 0755
+    path: "{{ scl_base_path }}/etc/httpd/sites"
+    state: directory
+
+- name: Create index file for default configuration
+  file:
+    mode: 0644
+    path: /usr/share/empty/index.html
+    state: touch
+
+- name: Copy main apache config directories
+  synchronize:
+    src: etc/httpd/{{ item }}
+    dest: "{{ scl_base_path }}/etc/httpd/{{ item }}"
+    delete: yes
+    recursive: yes
+  with_items:
+    - conf/
+    - conf.d/
+
+- name: Copy apache module configuration directory
+  synchronize:
+    src: etc/httpd/mods-common/
+    dest: "{{ scl_base_path }}/etc/httpd/conf.modules.d"
+    recursive: yes
+
+- name: Copy PHP 5.4 module configuration
+  synchronize:
+    src: etc/httpd/mods-custom/10-php.conf
+    dest: "{{ scl_base_path }}/etc/httpd/conf.modules.d"
+  when: php_version == "5.4"
+
+- name: Create symlink for php 5.4 httpd module
+  file:
+    src: /usr/lib64/httpd/modules/libphp5.so
+    dest: "{{ scl_base_path }}/usr/lib64/httpd/modules/libphp5.so"
+    state: link
+  when: php_version == "5.4"
+
+- name: Test if base system php54 module exists
+  stat:
+    path: /usr/lib64/httpd/modules/libphp5.so
+  register: php54module
+
+- name: Copy PHP 5.6 module configuration
+  synchronize:
+    src: etc/httpd/mods-custom/10-php56.conf
+    dest: "{{ scl_base_path }}/etc/httpd/conf.modules.d"
+  when: php_version == "5.6"
+
+- name: Create php 5.6 sym link httpd module
+  file:
+    src: /usr/lib64/httpd/modules/libphp56-php5.so
+    dest: "{{ scl_base_path }}/usr/lib64/httpd/modules/libphp56-php5.so"
+    state: link
+  when: php_version == "5.6"
+
+- name: Check if base system php56 module exists
+  stat:
+    path: /usr/lib64/httpd/modules/libphp56-php5.so
+  register: php56module
+
+- name: Test if php7 is installed
+  stat:
+    path: "/opt/rh/rh-php72/root/usr/bin/php"
+  register: php7_bin
+
+- name: Copy PHP 7.2 configuration file
+  copy:
+    src: etc/httpd/conf.d-custom/10-php72.conf
+    dest: "{{ scl_base_path }}/etc/httpd/conf.d/php.conf"
+    mode: 0664
+  when: php_version == "7.2" and php7_bin.stat.exists and php54module.stat.exists == False and php56module.stat.exists == False
+
+- name: Create systemd drop-in directory
+  file:
+    mode: 0755
+    path: /etc/systemd/system/{{ scl_svc_name }}.service.d
+    state: directory
+
+- name: Add drop-in for apache max open file limit
+  copy:
+    dest: /etc/systemd/system/{{ scl_svc_name }}.service.d/openfiles_limit.conf
+    owner: root
+    group: root
+    mode: 0444
+    src: etc/systemd/system/httpd.service.d/apache_maxfiles.conf
+
+- name: Add drop-in to configure logrotate for apache
+  copy:
+    dest: /etc/logrotate.d/httpd24-httpd
+    owner: root
+    group: root
+    mode: 0444
+    force: yes
+    src: etc/logrotate.d/httpd24-httpd
+
+- name: Install httpd24 scl mod_ssl package
+  yum:
+    name: httpd24-mod_ssl
+    state: present
+  when: httpd_mod_ssl
+
+- name: Enable and start httpd24 service
+  systemd:
+    enabled: yes
+    name: "{{ scl_svc_name }}"
+    state: started

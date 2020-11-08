@@ -1,0 +1,2 @@
+[server]
+3.25.142.5 ansible_user=centos ansible_ssh_private_key_file=/home/munmeh/.ssh/sbse_ansible_app

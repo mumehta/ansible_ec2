@@ -1,0 +1,17 @@
+---
+- name: Disable selinux
+  selinux:
+    state: disabled
+
+- name: Add sysctl general tuning config fragment
+  copy:
+    dest: /etc/sysctl.d/60-tuning.conf
+    owner: root
+    group: root
+    mode: 0444
+    src: general-tuning.conf
+
+- name: Restart systemd-sysctl service
+  systemd:
+    name: systemd-sysctl
+    state: restarted

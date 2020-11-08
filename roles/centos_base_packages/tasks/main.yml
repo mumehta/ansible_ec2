@@ -1,0 +1,37 @@
+---
+- name: Install server base packages
+  yum:
+    name:
+     - atop
+     - bash-completion-extras
+     - bind-utils
+     - curl
+     - dkms
+     - dstat
+     - ethtool
+     - git
+     - htop
+     - jq
+     - logrotate
+     - lsof
+     - make
+     - ncdu
+     - net-tools
+     - nmap
+     - openssl
+     - psmisc
+     - python3
+     - ruby
+     - screen
+     - strace
+     - sysstat
+     - telnet
+     - time
+     - tmux
+     - tree
+     - unzip
+     - vim-enhanced
+     - wget
+     - yum-plugin-priorities
+     - yum-utils
+    state: present

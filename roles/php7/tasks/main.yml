@@ -1,0 +1,6 @@
+---
+- include: yum.yml
+
+- include: configure.yml
+
+- include: composer.yml

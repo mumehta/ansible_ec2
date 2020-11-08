@@ -1,0 +1,10 @@
+---
+- name: reload apache
+  systemd:
+    name: "{{ scl_svc_name }}"
+    state: reloaded
+
+- name: restart apache
+  systemd:
+    name: "{{ scl_svc_name }}"
+    state: restarted
