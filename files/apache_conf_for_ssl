@@ -15,5 +15,8 @@
     SSLCertificateFile "/etc/letsencrypt/certs/munish.cf.crt"
     SSLCertificateKeyFile "/etc/letsencrypt/keys/munish.cf.key"
 
+    SSLProtocol TLSv1.1 TLSv1.2
+    SSLCipherSuite  HIGH:!aNULL:!MD5
+
 
 </VirtualHost>
