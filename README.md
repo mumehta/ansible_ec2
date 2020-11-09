@@ -43,5 +43,5 @@ Refer [here](https://medium.com/datadriveninvestor/devops-using-ansible-to-provi
 11. Apply playbook  
   >ansible-playbook -i prod  --vault-password-file vault.pass playbook-testweb.yml  
 
-12. Apply letsencrypt
-  >ansible-playbook -i prod  --vault-password-file vault.pass letsencrypt-issue.yml  
+12. Apply letsencrypt - uses certbot module inspired from [here](https://github.com/geerlingguy/ansible-role-certbot)  
+  >ansible-playbook -i prod  --vault-password-file vault.pass playbook-letsencrypt.yml  

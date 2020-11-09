@@ -1,0 +1,79 @@
+- hosts: server2
+  become: yes
+  vars:
+    ansible_user: "centos"
+    certbot_admin_email: munish.mehta.au@gmail.com
+    certbot_create_if_missing: true
+    certbot_create_standalone_stop_services:
+      - httpd24-httpd
+    domain_name: munish.gq
+    certbot_certs:
+      - domains:
+        - munish.gq
+        - www.munish.gq
+    certbot_auto_renew: true
+    certbot_auto_renew_user: "centos"
+    certbot_auto_renew_hour: "3"
+    certbot_auto_renew_minute: "30"
+    certbot_auto_renew_options: "--quiet --no-self-upgrade"
+    # - nginx_vhosts:
+    #   - listen: "443 ssl http2"
+    #     server_name: "certbot-test.servercheck.in"
+    #     root: "/usr/share/nginx/html"
+    #     index: "index.html index.htm"
+    #     state: "present"
+    #     template: "{{ nginx_vhost_template }}"
+    #     filename: "certbot_test.conf"
+    #     extra_parameters: |
+    #       ssl_certificate     /etc/letsencrypt/live/certbot-test.servercheck.in/fullchain.pem;
+    #       ssl_certificate_key /etc/letsencrypt/live/certbot-test.servercheck.in/privkey.pem;
+    #       ssl_protocols       TLSv1.1 TLSv1.2;
+    #       ssl_ciphers         HIGH:!aNULL:!MD5;
+  pre_tasks:
+    - name: Update apt cache.
+      apt: update_cache=true cache_valid_time=600
+      when: ansible_os_family == 'Debian'
+      changed_when: false
+
+    - name: Install dependencies (RedHat).
+      yum: name={{ item }} state=present
+      when: ansible_os_family == 'RedHat'
+      with_items:
+        - cronie
+        - epel-release
+
+    - name: Install cron (Debian).
+      apt: name=cron state=present
+      when: ansible_os_family == 'Debian'
+
+  tasks:
+
+    - name: Test if certs in file
+      shell: grep -c "^SSLCertificateFile /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem" /opt/rh/httpd24/root/etc/httpd/conf.d/ssl.conf || true
+      register: test_ssl
+
+    - name: Update cert location in httpd server2
+      lineinfile:
+        path: /opt/rh/httpd24/root/etc/httpd/conf.d/ssl.conf
+        regexp: '{{ item.From }}'
+        line: '{{ item.To }}'
+        backrefs: yes
+        state: present
+      with_items:
+        - { From: '^SSLCertificateFile(.*)$', To: 'SSLCertificateFile /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem'}
+        - { From: '^SSLCertificateKeyFile(.*)$', To: 'SSLCertificateKeyFile /etc/letsencrypt/live/{{ domain_name }}/privkey.pem'}
+      when: ansible_os_family == 'RedHat' and test_ssl.stdout == "0"
+
+
+    - name: Flush handlers in case any configs have changed.
+      meta: flush_handlers
+
+    - name: Test secure connection to SSL domain.
+      uri:
+        url: https://{{ domain_name }}/
+        status_code: 200
+      delegate_to: localhost
+      become: false
+
+  roles:
+    - certbot
